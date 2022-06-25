@@ -1,6 +1,7 @@
+"""
+Database Helper Class for storing Binance Orders data
+"""
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Table, MetaData
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 import pandas as pd
 
@@ -15,66 +16,72 @@ ORDERS           = 'orders'
 PAIRS            = 'pairs'
 
 class BinanceDB:
+    """
+    This class is used to create a database connection and execute queries.
+    """
     DB_ENGINE = {
         SQLITE: 'sqlite:///{DB}',
         # MYSQL: 'mysql://username:password@localhost/{DB}',
         # POSTGRESQL: 'postgresql://username:password@localhost/{DB}',
         # MICROSOFT_SQL_SERVER: 'mssql+pymssql://username:password@hostname:port/{DB}'
     }
-    
-    
+
     db_engine = None
 
     def __init__(self, dbtype, username='', password='', dbname=''):
         dbtype = dbtype.lower()
-
-        if dbtype in self.DB_ENGINE.keys():
+        dbtypes = list(self.DB_ENGINE.keys())
+        if dbtype in dbtypes:
             self.engine_url = self.DB_ENGINE[dbtype].format(DB=dbname)
-
             self.db_engine = create_engine(self.engine_url)
             print(self.db_engine)
         else:
             print("DBType is not found in DB_ENGINE")
             
     def create_db_tables(self):
+        """
+        Creates the database tables if they do not exist.
+        """
         metadata = MetaData()
-        orders = Table(ORDERS, metadata,
-                        Column('orderId',Integer, primary_key=True),
-                        Column('cummulativeQuoteQty',Integer),
-                        Column('executedQty',Integer),
-                        Column('icebergQty',Integer),
-                        Column('orderListId',Integer),
-                        Column('origQty',Integer),
-                        Column('origQuoteOrderQty',Integer),
-                        Column('price',Integer),
-                        Column('stopPrice',Integer),
-                        Column('clientOrderId',String),
-                        Column('isWorking',String),
-                        Column('side',String),
-                        Column('status',String),
-                        Column('symbol',String),
-                        Column('orderType',String),
-                        Column('symbol',String),
-                        Column('timeInForce',String),
-                        Column('time',DateTime),
-                        Column('updateTime',DateTime)
-                      )
-        
-        pairs = Table(PAIRS, metadata,
-                        Column('symbol', String, primary_key=True),
-                        Column('startTime', DateTime)
-                      )
+        Table(ORDERS, metadata,
+                Column('orderId',Integer, primary_key=True),
+                Column('cummulativeQuoteQty',Integer),
+                Column('executedQty',Integer),
+                Column('icebergQty',Integer),
+                Column('orderListId',Integer),
+                Column('origQty',Integer),
+                Column('origQuoteOrderQty',Integer),
+                Column('price',Integer),
+                Column('stopPrice',Integer),
+                Column('clientOrderId',String),
+                Column('isWorking',String),
+                Column('side',String),
+                Column('status',String),
+                Column('symbol',String),
+                Column('orderType',String),
+                Column('symbol',String),
+                Column('timeInForce',String),
+                Column('time',DateTime),
+                Column('updateTime',DateTime)
+            )
+        Table(PAIRS, metadata,
+                Column('symbol', String, primary_key=True),
+                Column('startTime', DateTime)
+            )
         try:
             metadata.create_all(self.db_engine)
             print("Tables created")
-        except Exception as e:
+        except Exception as error:
             print("Error occurred during Table creation!")
-            print(e)
-    
+            print(error)
+
     def get_last_time_for_symbol(self, symbol):
+        """
+        Returns the last order time for a symbol from the database.
+        """
         db_engine = create_engine(self.engine_url)
         conn = db_engine.connect()
-        QUERY = """
+        query = """
         select 
             symbol, time
         from 
@@ -82,17 +89,20 @@ class BinanceDB:
         where 
             o.symbol = "{}"   
         """
-        df = pd.read_sql_query(QUERY.format(symbol), conn)
+        latest_order_record = pd.read_sql_query(query.format(symbol), conn)
         conn.close()
-        if df.empty:
+        if latest_order_record.empty:
             return None
         else:
-            return max(df['time'])
-        
+            return max(latest_order_record['time'])
+
     def get_aggregated_data(self):
+        """
+        Returns the aggregated data from the database.
+        """
         db_engine = create_engine(self.engine_url)
         conn = db_engine.connect()        
-        QUERY = """
+        query = """
         SELECT 
             symbol, SUM(executedqty*sign) AS "Asset Quantity", SUM(cummulativequoteqty*sign) AS "Total Invested USDT"
         FROM 
@@ -105,10 +115,10 @@ class BinanceDB:
             FROM orders)
         GROUP BY symbol
         """
-        df = pd.read_sql_query(QUERY, conn)
+        aggregated_df = pd.read_sql_query(query, conn)
         conn.close()
-        if df.empty:
+        if aggregated_df.empty:
             return None
         else:
-            return df
+            return aggregated_df
         
