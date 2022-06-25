@@ -93,7 +93,7 @@ def make_dash_table(
     sort_mode=kwargs.get("sort_mode", "single")
     style_cell=kwargs.get('style_cell', {'padding':'4px'})
     style_cell_conditional=kwargs.get('style_cell_conditional', {})
-    hidden_columns=kwargs.get('style_cell_conditional', []),
+    hidden_columns=kwargs.get('style_cell_conditional', [])
     return dash_table.DataTable(
         data=table_df.to_dict('records'),
         columns=[{"name": i, "id": i} for i in table_df.columns],

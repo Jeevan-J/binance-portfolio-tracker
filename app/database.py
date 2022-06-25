@@ -1,7 +1,7 @@
 """
 Database Helper Class for storing Binance Orders data
 """
-from sqlite3 import DatabaseError
+from sqlite3 import DatabaseError, OperationalError
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Table, MetaData
 
 import pandas as pd
@@ -29,7 +29,7 @@ class BinanceDB:
 
     db_engine = None
 
-    def __init__(self, dbtype, username='', password='', dbname=''):
+    def __init__(self, dbtype, dbname=''):
         dbtype = dbtype.lower()
         dbtypes = list(self.DB_ENGINE.keys())
         if dbtype in dbtypes:
@@ -72,10 +72,7 @@ class BinanceDB:
         try:
             metadata.create_all(self.db_engine)
             print("Tables created")
-        except DatabaseError as error:
-            print("Error occurred during Table creation!")
-            print(error)
-        except Exception as error:
+        except OperationalError as error:
             print("Error occurred during Table creation!")
             print(error)
 

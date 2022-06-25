@@ -27,7 +27,6 @@ app = Dash(
 )
 
 app.title = "Portfolio Tracker"
-app._serve_default_favicon = app.get_asset_url("PortfolioTrackerLogos/favicon.ico")
 server = app.server
 
 # Binance Client
