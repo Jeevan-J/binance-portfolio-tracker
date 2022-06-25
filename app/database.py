@@ -1,6 +1,7 @@
 """
 Database Helper Class for storing Binance Orders data
 """
+from sqlite3 import DatabaseError
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Table, MetaData
 
 import pandas as pd
@@ -37,7 +38,7 @@ class BinanceDB:
             print(self.db_engine)
         else:
             print("DBType is not found in DB_ENGINE")
-            
+
     def create_db_tables(self):
         """
         Creates the database tables if they do not exist.
@@ -71,6 +72,9 @@ class BinanceDB:
         try:
             metadata.create_all(self.db_engine)
             print("Tables created")
+        except DatabaseError as error:
+            print("Error occurred during Table creation!")
+            print(error)
         except Exception as error:
             print("Error occurred during Table creation!")
             print(error)
@@ -93,15 +97,14 @@ class BinanceDB:
         conn.close()
         if latest_order_record.empty:
             return None
-        else:
-            return max(latest_order_record['time'])
+        return max(latest_order_record['time'])
 
     def get_aggregated_data(self):
         """
         Returns the aggregated data from the database.
         """
         db_engine = create_engine(self.engine_url)
-        conn = db_engine.connect()        
+        conn = db_engine.connect()
         query = """
         SELECT 
             symbol, SUM(executedqty*sign) AS "Asset Quantity", SUM(cummulativequoteqty*sign) AS "Total Invested USDT"
@@ -119,6 +122,5 @@ class BinanceDB:
         conn.close()
         if aggregated_df.empty:
             return None
-        else:
-            return aggregated_df
+        return aggregated_df
         

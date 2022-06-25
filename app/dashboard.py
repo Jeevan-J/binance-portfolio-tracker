@@ -33,12 +33,12 @@ server = app.server
 # Binance Client
 if os.getenv('ENVIRONMENT','TEST').upper() == 'PROD':
     binance_client = Client(
-        os.getenv("BINANCE_PROD_API_KEY"), 
+        os.getenv("BINANCE_PROD_API_KEY"),
         os.getenv("BINANCE_PROD_API_SECRET_KEY")
     )
 else:
     binance_client = Client(
-        os.getenv("BINANCE_TEST_API_KEY"), 
+        os.getenv("BINANCE_TEST_API_KEY"),
         os.getenv("BINANCE_TEST_API_SECRET_KEY")
     )
     binance_client.API_URL = 'https://testnet.binance.vision/api'
@@ -63,18 +63,17 @@ def display_page(pathname):
     """
     if pathname == '/':
         return spot.create_layout(app, binance_client, binance_dbms=binance_dbms)
-    else:
-        return html.Div([
+    return html.Div([
             html.H1("404"),
             html.Hr(),
             html.P("The page you are looking for does not exist."),
         ])
 
-@app.callback(Output('add-pair-out','children'), 
+@app.callback(Output('add-pair-out','children'),
               Input('add-pair-submit','n_clicks'),
               [State('add-pair-name','value'), State('add-pair-startTime','value')],
               prevent_initial_callback=True)
-def add_pair(n, pair_name, pair_start_time):
+def add_pair(_, pair_name, pair_start_time):
     """
     This is a simple callback function that adds a new pair to the database.
 
@@ -100,8 +99,7 @@ def add_pair(n, pair_name, pair_start_time):
             if_exists="append",
             index=False)
         return ["Added "+pair_name+" !!"]
-    else:
-        return ["Provide both Pair and Start Date!"]
+    return ["Provide both Pair and Start Date!"]
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port=8000, debug=False)
