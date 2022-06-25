@@ -19,7 +19,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: "binance-portfolio-tracker"
+  IMAGE_NAME: "jeevanj/binance-portfolio-tracker"
 
 
 jobs:
