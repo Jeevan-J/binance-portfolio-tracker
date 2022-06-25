@@ -1,7 +1,7 @@
 """
 Database Helper Class for storing Binance Orders data
 """
-from sqlite3 import DatabaseError, OperationalError
+from sqlite3 import OperationalError
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Table, MetaData
 
 import pandas as pd
