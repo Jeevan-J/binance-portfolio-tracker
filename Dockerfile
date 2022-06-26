@@ -11,8 +11,8 @@ RUN pip install -r requirements.txt
 RUN apt-get purge -y --auto-remove gcc
 
 # Copy the source code to the build context
-COPY app/* /app/
-WORKDIR /app/
+COPY app .
+WORKDIR /app
 RUN ls -la
 
 EXPOSE 8000
