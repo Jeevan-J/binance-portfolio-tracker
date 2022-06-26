@@ -13,6 +13,7 @@ RUN apt-get purge -y --auto-remove gcc
 # Copy the source code to the build context
 COPY app .
 WORKDIR /app
+mkdir data
 RUN ls -la
 
 EXPOSE 8000
