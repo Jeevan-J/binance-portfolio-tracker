@@ -11,8 +11,9 @@ RUN pip install -r requirements.txt
 RUN apt-get purge -y --auto-remove gcc
 
 # Copy the source code to the build context
-COPY app/ /
+COPY app/* /app/
 WORKDIR /app/
+RUN ls -la
 
 EXPOSE 8000
 CMD gunicorn -b 0.0.0.0:8000 dashboard:server
