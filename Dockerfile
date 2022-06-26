@@ -11,8 +11,8 @@ RUN pip install -r requirements.txt
 RUN apt-get purge -y --auto-remove gcc
 
 # Copy the source code to the build context
-COPY app .
-WORKDIR /app
+COPY app/ /app/
+WORKDIR /app/
 RUN mkdir data
 RUN ls -la
 
