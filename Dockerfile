@@ -16,4 +16,4 @@ WORKDIR /app/
 RUN ls -la
 
 EXPOSE 8000
-CMD gunicorn -b 0.0.0.0:8000 dashboard:server
+CMD uvicorn --host 0.0.0.0 --port 8000 dashboard:server
