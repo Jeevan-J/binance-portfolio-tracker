@@ -14,5 +14,5 @@ RUN apt-get purge -y --auto-remove gcc
 COPY app/ /
 WORKDIR /app/
 
-EXPOSE 80
-CMD gunicorn -b 0.0.0.0:80 dashboard:server
+EXPOSE 8000
+CMD gunicorn -b 0.0.0.0:8000 dashboard:server
