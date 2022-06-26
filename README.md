@@ -77,7 +77,7 @@ The frontend is built with [Ploty Dash](https://plotly.com/dash/) with utility c
 
 #### a. Run environment
 
-Run the following command to start the Docker images from [Docker Hub](https://hub.docker.com/r/ghostfolio/ghostfolio):
+Run the following command to start the Docker images from [Docker Hub](https://hub.docker.com/repository/docker/jeevanj/binance-portfolio-tracker):
 
 ```bash
 docker-compose --env-file ./.env -f docker/docker-compose.yml up -d
